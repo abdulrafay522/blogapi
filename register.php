@@ -1,0 +1,47 @@
+<?php
+include 'db.php';
+include 'routes_canaction_post.php';
+include 'response.php'; 
+validate_method('POST');
+
+header('Content-Type: application/json');
+
+$data = json_decode(file_get_contents("php://input"));
+$errors = [];
+
+if (empty($data->name)) {
+    $errors[] = "Name is required";
+}
+
+if (empty($data->email)) {
+    $errors[] = "Email is required";
+} elseif (!filter_var($data->email, FILTER_VALIDATE_EMAIL)) {
+    $errors[] = "Email format is invalid";
+}
+
+if (empty($data->password)) {
+    $errors[] = "Password is required";
+}
+
+if (!empty($errors)) {
+    send_response(false, "Validation failed", null, $errors); // <-- yeh use karo
+}
+
+// Register user
+$name = $data->name;
+$email = $data->email;
+$password = password_hash($data->password, PASSWORD_BCRYPT);
+
+// SQL query
+$sql = "INSERT INTO users (name, email, password) VALUES ('$name', '$email', '$password')";
+
+if ($conn->query($sql)) {
+    $user_data = [
+        "name" => $name,
+        "email" => $email
+    ];
+    send_response(true, "Registration successful", $user_data, null); // <-- success response
+} else {
+    send_response(false, "Registration failed", null, [$conn->error]); // <-- fail response
+}
+?>
