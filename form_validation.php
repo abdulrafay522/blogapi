@@ -2,10 +2,10 @@
 // include 'validate_method.php'; // for POST/GET method check
 // validate_method('POST');
 
-header('Content-Type: application/json');
+// header('Content-Type: application/json');
 include 'db.php';
 
-$data = json_decode(file_get_contents("php://input"));
+// $data = json_decode(file_get_contents("php://input"));
 $errors = [];
 
 if (empty($data->name)) {

@@ -1,7 +1,6 @@
 <?php
-include 'routes_canaction_post.php';
-include 'db.php';
-$data = json_decode(file_get_contents("php://input"));
+$method_name = 'POST';
+include 'configer.php';
 $id = $data->id;
 
 $conn->query("DELETE FROM blogs WHERE id=$id");

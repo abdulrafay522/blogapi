@@ -1,9 +1,6 @@
 <?php
-include 'routes_canaction_post.php';
-include 'db.php';
-validate_method('POST');
-header('Content-Type: application/json');
-$data = json_decode(file_get_contents("php://input"));
+$method_name = 'POST';
+include 'configer.php';
 $errors = [];
 
 if (empty($data->id)) {
