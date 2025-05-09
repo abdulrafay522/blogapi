@@ -1,12 +1,12 @@
 <?php
     
     if ($_SERVER['REQUEST_METHOD'] !== strtoupper($method_name)) {
-        http_response_code(405);
+       
         send_response(
-            'error',
+            false,
             "405 Not Allowed - {$method_name} required",
-            null,
-            ["method_used" => $_SERVER['REQUEST_METHOD']]
+            ["method_used" => $_SERVER['REQUEST_METHOD']],
+            405
         );
     }
 ?>

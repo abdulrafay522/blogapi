@@ -38,6 +38,6 @@ if ($conn->query($sql)) {
     ];
     send_response(true, "Blog created successfully", $blogData, null);
 } else {
-    send_response(false, "Failed to create blog", null, [$conn->error]);
+    send_response(false, "Failed to create blog", null, [$conn->error],406);
 }
 ?>

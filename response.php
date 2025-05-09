@@ -15,22 +15,22 @@
 //     echo json_encode($response);
 //     exit;
 // }
-function send_response($status, $message, $response = null) {
+function send_response(bool $status, string $message, array|null $response = null, int $statusCode =200) {
     header('Content-Type: application/json');
   
-    if ($status == 'success') {
-        http_response_code(200); 
+    if ($status) {
+        http_response_code($statusCode); 
     } else {
-        http_response_code(405); 
+        http_response_code($statusCode ?? 400);
     }
 
     $response_data = [
         "status" => $status,
         "message" => $message,
     ];
+    
 
-
-    if ($status == 'success') {
+    if ($status) {
         $response_data["data"] = $response;
     } else {
         $response_data["error"] = $response;
