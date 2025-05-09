@@ -1,8 +1,15 @@
 <?php
 $method_name = 'POST';
-include 'configer.php';
+include 'configure.php';
+
 $id = $data->id;
 
+if (empty($id)) {
+    send_response(false, "Blog ID is required", null, ["Blog ID is missing"]);
+    exit;
+}
+
 $conn->query("DELETE FROM blogs WHERE id=$id");
-echo json_encode(["message" => "Blog deleted"]);
+
+send_response(true, "Blog deleted successfully", null, null);
 ?>

@@ -1,6 +1,6 @@
 <?php
 $method_name = 'POST';
-include 'configer.php';
+include 'configure.php';
 $errors = [];
 
 if (empty($data->id)) {
@@ -16,16 +16,15 @@ if (empty($data->content)) {
 }
 
 if (!empty($errors)) {
-    echo json_encode(["errors" => $errors]);
+    send_response(false, "Validation failed", null, $errors); // ✅ Correct usage
     exit;
 }
 
-$data = json_decode(file_get_contents("php://input"));
-
 $id = $data->id;
-$title = $data->title;
-$content = $data->content;
+$title = mysqli_real_escape_string($conn, $data->title); // ✅ Prevent SQL error
+$content = mysqli_real_escape_string($conn, $data->content);
 
 $conn->query("UPDATE blogs SET title='$title', content='$content' WHERE id=$id");
-echo json_encode(["message" => "Blog updated"]);
+
+send_response(true, "Blog updated successfully", null, null); // ✅ Correct usage
 ?>

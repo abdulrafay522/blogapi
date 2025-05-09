@@ -1,17 +1,11 @@
 <?php
-// include 'validate_method.php'; // for POST/GET method check
-// validate_method('POST');
-
-// header('Content-Type: application/json');
-include 'db.php';
-
-// $data = json_decode(file_get_contents("php://input"));
+include 'configure.php';
 $errors = [];
 
 if (empty($data->name)) {
     $errors[] = "Name is required";
 }
-
+ 
 if (empty($data->email)) {
     $errors[] = "Email is required";
 } elseif (!filter_var($data->email, FILTER_VALIDATE_EMAIL)) {
@@ -23,7 +17,7 @@ if (empty($data->password)) {
 }
 
 if (!empty($errors)) {
-    echo json_encode(["errors" => $errors]);
+    send_response(["errors" => $errors]);
     exit;
 }
 

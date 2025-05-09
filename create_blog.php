@@ -1,10 +1,9 @@
 <?php
 $method_name = 'POST';
-include 'configer.php';
+include 'configure.php';
 
 $errors = [];
 
-// ✅ Validation
 if (empty($data->title)) {
     $errors[] = "Title is required";
 }
@@ -21,8 +20,10 @@ if (!empty($errors)) {
 
 //  Assign variables
 $user_id = $data->user_id; // Assuming author_id is the user_id
-$title = $data->title;
-$content = $data->content;
+// $title = $data->title;
+// $content = $data->content;
+$title = mysqli_real_escape_string($conn, $data->title);
+$content = mysqli_real_escape_string($conn, $data->content);
 
 
 // ✅ Insert query

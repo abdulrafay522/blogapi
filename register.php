@@ -1,8 +1,7 @@
 <?php
 $method_name = 'POST';
-include 'configer.php';
-
-// $data = json_decode(file_get_contents("php://input"));
+include 'configure.php';
+    
 $errors = [];
 
 if (empty($data->name)) {
@@ -36,7 +35,7 @@ if ($conn->query($sql)) {
         "name" => $name,
         "email" => $email
     ];
-    send_response(true, "Registration successful", $user_data, null); // <-- success response
+     send_response(true, "Registration successful", $user_data, null); // <-- success response
 } else {
     send_response(false, "Registration failed", null, [$conn->error]); // <-- fail response
 }
