@@ -1,4 +1,5 @@
 <?php
+    
 $method_name = 'POST';
 include 'configure.php';
 $errors = [];
@@ -14,11 +15,9 @@ if (empty($data->reaction)) {
 }
 
 if (!empty($errors)) {
-//    send_response(["errors" => $errors]);
-send_response(false, "Validation errors", null, $errors);
+    send_response(false, "Validation errors", $errors, 400); // fixed
     exit;
 }
- 
 
 $user_id = $data->user_id;
 $blog_id = $data->blog_id;
@@ -27,6 +26,5 @@ $reaction = $data->reaction;
 $conn->query("DELETE FROM reactions WHERE user_id=$user_id AND blog_id=$blog_id");
 $conn->query("INSERT INTO reactions (user_id, blog_id, reaction) VALUES ('$user_id', '$blog_id', '$reaction')");
 
-//    send_response(["message" => "Reacted to blog"]);
-send_response(true, "Reacted to blog");
+send_response(true, "Reacted to blog", null, 200);
 ?>
