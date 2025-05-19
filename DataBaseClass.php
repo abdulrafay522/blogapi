@@ -40,7 +40,7 @@ class DataBaseClass {
     }
 
     function runQuery() {
-        $this->conn->query($this->query);
+        return $this->conn->query($this->query);
     }
 }
 

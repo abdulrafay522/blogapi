@@ -1,7 +1,12 @@
 <?php
     
+
 $method_name = 'POST';
 include 'configure.php';
+
+// Decode incoming JSON data
+
+
 $errors = [];
 
 if (empty($data->blog_id)) {
@@ -14,17 +19,25 @@ if (empty($data->reaction)) {
     $errors[] = "Reaction must be 'like' or 'dislike'";
 }
 
+if (empty($data->user_id)) {
+    $errors[] = "User ID is required";
+}
+
 if (!empty($errors)) {
-    send_response(false, "Validation errors", $errors, 400); // fixed
-    exit;
+    (new ApiResponse(false, "Validation errors", $errors, 400))->send();
 }
 
 $user_id = $data->user_id;
 $blog_id = $data->blog_id;
 $reaction = $data->reaction;
 
+// First delete existing reaction (if any)
 $conn->query("DELETE FROM reactions WHERE user_id=$user_id AND blog_id=$blog_id");
-$conn->query("INSERT INTO reactions (user_id, blog_id, reaction) VALUES ('$user_id', '$blog_id', '$reaction')");
 
-send_response(true, "Reacted to blog", null, 200);
+// Then insert new reaction
+if ($conn->query("INSERT INTO reactions (user_id, blog_id, reaction) VALUES ('$user_id', '$blog_id', '$reaction')")) {
+    (new ApiResponse(true, "Reacted to blog", null, 200))->send();
+} else {
+    (new ApiResponse(false, "Failed to react to blog", [$conn->error], 500))->send();
+}
 ?>

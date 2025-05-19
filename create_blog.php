@@ -3,6 +3,9 @@
 $method_name = 'POST';
 include 'configure.php';
 
+// Get POST data
+$data = json_decode(file_get_contents('php://input'));
+
 $errors = [];
 
 if (empty($data->title)) {
@@ -16,10 +19,10 @@ if (empty($data->user_id)) {
 }
 
 if (!empty($errors)) {
-    send_response(false, "Validation failed", $errors, 400);  // ✅ 400 instead of null
+    (new ApiResponse(false, "Validation failed", $errors, 400))->send();
 }
 
-//  Assign variables
+// Assign variables
 $user_id = $data->user_id;
 $title = mysqli_real_escape_string($conn, $data->title);
 $content = mysqli_real_escape_string($conn, $data->content);
@@ -28,13 +31,13 @@ $sql = "INSERT INTO blogs (user_id, title, content) VALUES ('$user_id', '$title'
 
 if ($conn->query($sql)) {
     $blogData = [
-        "user_id" => $conn->insert_id,
+        "id" => $conn->insert_id,  // use insert_id here (blog id)
+        "user_id" => $user_id,
         "title" => $title,
         "content" => $content
     ];
-    send_response(true, "Blog created successfully", $blogData, 200);  // ✅ use 200 here
+    (new ApiResponse(true, "Blog created successfully", $blogData, 200))->send();
 } else {
-    send_response(false, "Failed to create blog", [$conn->error], 406);  // ✅ already fine
+    (new ApiResponse(false, "Failed to create blog", [$conn->error], 406))->send();
 }
-var_dump($user_id);
 ?>

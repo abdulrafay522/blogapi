@@ -1,11 +1,11 @@
 <?php
 
 $method_name = 'POST';
-include 'configure.php'; // make sure this includes DB connection and response.php
+include 'configure.php'; 
 
 // Get raw JSON input
-$input = file_get_contents("php://input");
-$data = json_decode($input);
+// $input = file_get_contents("php://input");
+// $data = json_decode($input);
 
 // Basic validation
 $errors = [];
