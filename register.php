@@ -1,50 +1,50 @@
 <?php
-// 
+
 $method_name = 'POST';
-include 'configure.php';
+include 'configure.php'; // make sure this includes DB connection and response.php
 
-// $errors = [];
+// Get raw JSON input
+$input = file_get_contents("php://input");
+$data = json_decode($input);
 
-// if (empty($data->name)) {
-//     $errors[] = "Name is required";
-// }
+// Basic validation
+$errors = [];
 
-// if (empty($data->email)) {
-//     $errors[] = "Email is required";
-// } elseif (!filter_var($data->email, FILTER_VALIDATE_EMAIL)) {
-//     $errors[] = "Email format is invalid";
-// }
+if (empty($data->name)) {
+    $errors[] = "Name is required";
+}
+if (empty($data->email)) {
+    $errors[] = "Email is required";
+} elseif (!filter_var($data->email, FILTER_VALIDATE_EMAIL)) {
+    $errors[] = "Invalid email format";
+}
+if (empty($data->password)) {
+    $errors[] = "Password is required";
+}
 
-// if (empty($data->password)) {
-//     $errors[] = "Password is required";
-// }
+if (!empty($errors)) {
+    (new ApiResponse(false, "Validation failed", $errors, 422))->send();
+}
 
-// if (!empty($errors)) {
+// Assign values
+$name = $data->name;
+$email = $data->email;
+$password = password_hash($data->password, PASSWORD_BCRYPT);
 
-//     send_response(false, "Validation failed", $errors, 422);
-// }
+// Insert into database
+$sql = "INSERT INTO users (name, email, password) VALUES ('$name', '$email', '$password')";
 
+try {
+    $DB_Class->setQuery($sql);
+    $DB_Class->runQuery();
 
-// $name = $data->name;
-// $email = $data->email;
-// $password = password_hash($data->password, PASSWORD_BCRYPT);
+    $user_data = [
+        "name" => $name,
+        "email" => $email
+    ];
 
-
-// $sql = "INSERT INTO users (name, email, password) VALUES ('$name', '$email', '$password')";
-$sql = "INSERT INTO users (name, email, password) VALUES ('rafay', 'rafaykhan@gmail.com', '123456')";
-$DB_Class->setQuery($sql);
-$DB_Class->runQuery($sql);
-echo "<pre>";
-print_r($DB_Class);
-die();
-$result = $conn->query($sql);
-// if ($conn->query($sql)) {
-//     $user_data = [
-//         "name" => $name,
-//         "email" => $email
-//     ];
-//     send_response(true, "Registration successful", $user_data, 200);
-// } else {
-//     send_response(false, 'Registration failed', [$conn->error], 500);
-// }
+    (new ApiResponse(true, "Registration successful", $user_data, 200))->send();
+} catch (Exception $e) {
+    (new ApiResponse(false, "Registration failed", [$e->getMessage()], 500))->send();
+}
 ?>
