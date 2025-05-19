@@ -24,15 +24,34 @@ $errors = [];
 // $password = $data->password;
 
 // Check user from DB
-$sql = "SELECT * FROM users WHERE email = 'rafaykhan22@gmail.com' LIMIT 1";
-// $sql = "SELECT * FROM users WHERE email = '$email' LIMIT 1";
-$DB_Class->setQuery($sql);
-$DB_Class->runQuery($sql);
-echo "<pre>";
-print_r($DB_Class);
-die();
-$result = $conn->query($sql);
+// $sql = "SELECT * FROM users WHERE email = 'rafaykhan22@gmail.com' LIMIT 1";
+// // $sql = "SELECT * FROM users WHERE email = '$email' LIMIT 1";
+// $DB_Class->setQuery($sql);
+// $DB_Class->runQuery($sql);
+// echo "<pre>";
+// print_r($DB_Class);
+// die();
+// $result = $conn->query($sql);
 
+
+// if ($result && $result->num_rows === 1) {
+//     $user = $result->fetch_assoc();
+
+//     // Verify password
+//     if (password_verify($password, $user['password'])) {
+//         unset($user['password']);
+//         send_response(true, "Login successful", $user, 200);
+//     } else {
+//         send_response(false, "Incorrect password", ["Invalid credentials"], 401);
+//     }
+// } 
+// else {
+//     send_response(false, "User not found", ["No account associated with this email"], 404);
+// }
+
+$sql = "SELECT * FROM users WHERE email = '$email' LIMIT 1";
+$DB_Class->setQuery($sql);
+$result = $DB_Class->runQuery(); 
 
 if ($result && $result->num_rows === 1) {
     $user = $result->fetch_assoc();
@@ -40,12 +59,12 @@ if ($result && $result->num_rows === 1) {
     // Verify password
     if (password_verify($password, $user['password'])) {
         unset($user['password']);
-        send_response(true, "Login successful", $user, 200);
+        (new ApiResponse(true, "Login successful", $user, 200))->send();
     } else {
-        send_response(false, "Incorrect password", ["Invalid credentials"], 401);
+        (new ApiResponse(false, "Incorrect password", ["Invalid credentials"], 401))->send();
     }
-} 
-else {
-    send_response(false, "User not found", ["No account associated with this email"], 404);
+
+} else {
+    (new ApiResponse(false, "User not found", ["No account associated with this email"], 404))->send();
 }
 ?>
